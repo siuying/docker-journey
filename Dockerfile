@@ -8,7 +8,7 @@ RUN set -x \
   && apk add --no-cache --virtual .bootstrap-deps wget ca-certificates \
   && wget -O journey.zip https://github.com/kabukky/journey/releases/download/v${JOURNEY_VERSION}/journey-linux-amd64.zip \
   && apk del .bootstrap-deps \
-  && unzip journey.zip -d /app/ \
+  && unzip journey.zip -d /app \
   && cp -r /app/content /app/content.orig
 
 ADD entrypoint.sh /app/entrypoint.sh
