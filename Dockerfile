@@ -1,4 +1,4 @@
-FROM golang:1.9.2-alpine-3.7
+FROM golang:1.9-alpine3.7
 ENV JOURNEY_VERSION 0.2.0
 
 RUN set -x \  
