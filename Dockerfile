@@ -2,6 +2,7 @@ FROM alpine:3.6
 ENV JOURNEY_VERSION 0.2.0
 
 RUN set -x \  
+  && mkdir /app \
   && apk add --no-cache --virtual .bootstrap-deps wget ca-certificates \
   && wget -O journey.zip https://github.com/kabukky/journey/releases/download/v${JOURNEY_VERSION}/journey-linux-amd64.zip \
   && apk del .bootstrap-deps \
