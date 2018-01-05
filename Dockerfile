@@ -1,20 +1,20 @@
-FROM golang:1.9-alpine3.7
-ENV JOURNEY_VERSION 0.2.0
+FROM golang:1.9-alpine3.7 as builder
+ENV JOURNEY_VERSION v0.2.0
 
-RUN set -x \  
-  && mkdir /app \
-  && apk add --no-cache --virtual .bootstrap-deps wget ca-certificates \
-  && wget -O journey.zip https://github.com/kabukky/journey/releases/download/v${JOURNEY_VERSION}/journey-linux-amd64.zip \
-  && apk del .bootstrap-deps \
-  && unzip journey.zip -d /app \
-  && rm journey.zip \
-  && cp -r /app/content /app/content.orig
+RUN apk update && apk add -y build-base git
+RUN go get github.com/kabukky/journey && \
+  cd $GOPATH/src/github.com/kabukky/journey && \
+  git checkout ${JOURNEY_VERSION} && \
+  git submodule update --init --recursive && \ 
+  GOARCH=amd64 GOOS=linux go build && \
+  mkdir /app && cp -r $GOPATH/src/github.com/kabukky/journey/journey $GOPATH/src/github.com/kabukky/journey/content $GOPATH/src/github.com/kabukky/journey/built-in $GOPATH/src/github.com/kabukky/journey/config.json /app
 
-ADD entrypoint.sh /app/entrypoint.sh
-
+FROM alpine:3.7
 WORKDIR /app
-VOLUME /app/content
+VOLUME /app
+
 ENV PORT 8084
 EXPOSE 8084
 
-ENTRYPOINT ["/app/entrypoint.sh"]
+COPY --from=builder /app /app
+CMD ["./journey"]
